@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <link rel="icon" href="index-image.webp" type="image/png">
+	<meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>虚拟机安装指南 - 从入门到精通</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        :root {
+            --primary: #4361ee;
+            --secondary: #3a0ca3;
+            --accent: #4cc9f0;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --success: #2ecc71;
+            --warning: #f39c12;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            padding-bottom: 50px;
+        }
+        
+        header {
+            background: linear-gradient(120deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 3rem 1rem;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+            transform: rotate(30deg);
+        }
+        
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+        
+        h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .subtitle {
+            font-size: 1.4rem;
+            max-width: 800px;
+            margin: 0 auto 2rem;
+            opacity: 0.9;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: -50px auto 0;
+            padding: 0 20px;
+            position: relative;
+        }
+        
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            padding: 30px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        }
+        
+        .card::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s ease;
+        }
+        
+        .card:hover::after {
+            transform: scaleX(1);
+        }
+        
+        .card h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .card h2 i {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .step-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            padding: 30px;
+            margin-bottom: 30px;
+            display: flex;
+            gap: 25px;
+            align-items: flex-start;
+        }
+        
+        .step-number {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+        
+        .step-content h3 {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            color: var(--secondary);
+        }
+        
+        .os-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .os-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        
+        .os-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .os-card img {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            margin-bottom: 15px;
+        }
+        
+        .os-card h4 {
+            margin-bottom: 10px;
+            color: var(--dark);
+        }
+        
+        .os-card p {
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .recommended {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .recommended::before {
+            content: "推荐";
+            position: absolute;
+            top: 10px;
+            right: -30px;
+            background: var(--success);
+            color: white;
+            padding: 3px 35px;
+            transform: rotate(45deg);
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        
+        .faq-item {
+            background: white;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        
+        .faq-question {
+            padding: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f8f9fa;
+        }
+        
+        .faq-answer {
+            padding: 0 20px;
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .faq-item.active .faq-answer {
+            padding: 20px;
+            max-height: 500px;
+        }
+        
+        .btn {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 12px 30px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-top: 15px;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.3);
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(67, 97, 238, 0.4);
+        }
+        
+        .btn i {
+            margin-right: 8px;
+        }
+        
+        .note {
+            background: #e3f2fd;
+            border-left: 4px solid var(--primary);
+            padding: 15px;
+            border-radius: 0 8px 8px 0;
+            margin: 20px 0;
+        }
+        
+        .requirements {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            margin: 30px 0;
+            gap: 20px;
+        }
+        
+        .requirement-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            flex: 1;
+            min-width: 200px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .requirement-card i {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 20px;
+            color: #666;
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            .subtitle {
+                font-size: 1.1rem;
+            }
+            
+            .step-card {
+                flex-direction: column;
+            }
+            
+            .step-number {
+                margin-bottom: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <h1><i class="fas fa-cloud"></i> 虚拟机安装指南</h1>
+            <p class="subtitle">学习如何轻松创建虚拟机，在同一台电脑上运行多个操作系统</p>
+            <a href="#install-steps" class="btn"><i class="fas fa-play-circle"></i> 开始学习</a>
+        </div>
+    </header>
+    
+    <div class="container">
+        <div class="card-grid">
+            <div class="card">
+                <h2><i class="fas fa-question-circle"></i> 什么是虚拟机？</h2>
+                <p>虚拟机(VM)是通过软件模拟的完整计算机系统。它允许您在一台物理计算机上运行多个操作系统，每个操作系统都在自己的隔离环境中运行。</p>
+                <p>使用虚拟机，您可以：</p>
+                <ul>
+                    <li>在同一台电脑上运行Windows、Linux和macOS</li>
+                    <li>安全地测试软件和操作系统</li>
+                    <li>创建开发和测试环境</li>
+                    <li>运行不兼容当前系统的应用程序</li>
+                </ul>
+            </div>
+            
+            <div class="card">
+                <h2><i class="fas fa-lightbulb"></i> 为什么使用虚拟机？</h2>
+                <p>虚拟机技术提供了许多优势：</p>
+                <ul>
+                    <li><strong>安全性</strong>：在隔离环境中测试可疑软件</li>
+                    <li><strong>成本效益</strong>：减少硬件投资，最大化资源利用</li>
+                    <li><strong>灵活性</strong>：轻松创建、备份和恢复系统环境</li>
+                    <li><strong>兼容性</strong>：运行专为其他操作系统设计的应用程序</li>
+                    <li><strong>教育价值</strong>：学习不同操作系统无需额外硬件</li>
+                </ul>
+            </div>
+            
+            <div class="card">
+                <h2><i class="fas fa-cogs"></i> 系统要求</h2>
+                <p>在安装虚拟机前，请确保您的计算机满足以下最低要求：</p>
+                <div class="requirements">
+                    <div class="requirement-card">
+                        <i class="fas fa-microchip"></i>
+                        <h3>CPU</h3>
+                        <p>64位双核处理器<br>(推荐四核或更高)</p>
+                    </div>
+                    <div class="requirement-card">
+                        <i class="fas fa-memory"></i>
+                        <h3>内存</h3>
+                        <p>8GB RAM<br>(推荐16GB或更高)</p>
+                    </div>
+                    <div class="requirement-card">
+                        <i class="fas fa-hdd"></i>
+                        <h3>存储</h3>
+                        <p>20GB可用空间<br>(SSD推荐)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="install-steps" class="card">
+            <h2><i class="fas fa-download"></i> 安装步骤</h2>
+            <p>按照以下步骤安装和配置您的第一个虚拟机：</p>
+			<p><strong>注意：</strong>这里使用VMware 16来演示，不同版本之间可能纯在差异！</p>
+            
+            <div class="step-card">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <h3>选择虚拟机软件</h3>
+                    <p>首先选择并下载一个虚拟机管理程序：</p>
+                    <ul>
+                        <li><strong>VMware Workstation Player</strong> (免费个人使用)</li>
+                    </ul>
+                    <a href="https://www.vmware.com/products/desktop-hypervisor/workstation-and-fusion" class="btn"><i class="fas fa-download"></i> 下载 VMware Workstation Player</a>
+                </div>
+            </div>
+            
+            <div class="step-card">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <h3>下载VMware</h3>
+                    <p>按图片里的步骤</p>
+					<img src="ITVM-1.png" alt="获取步骤" width="500" height="250">
+                    <ol>
+                        <li>点击"login"（这一步是为了免得待会儿还要登陆）</li>
+                        <li>登陆你的账号，如果没有请注册一个。</li>
+                        <li>登陆成功后，<a href="https://www.vmware.com/products/desktop-hypervisor/workstation-and-fusion">回到</a>刚才的网页，点击"DOWNLOAD FUSION OR WORKSTATION"。</li>
+                        <li>如果你有选择困难症那就选最新款好了<br>
+                    </ol>
+                    <div class="note">
+                        <p><strong>注意：</strong></p>
+						<ol>
+							<li>  VMware是<strong>不需要</strong>付钱的</li>
+							<li>  官网下载数度比较慢但还请耐心等待，<strong>请不要使用第三方网站下载</strong>，那可能是盗版的。（作者就差点被坑）</li>
+						</ol>
+                    </div>
+                </div>
+            </div>
+			
+			<div class="step-card">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <h3>安装虚拟机软件</h3>
+                    <p>运行下载的安装程序并按照提示完成安装。安装过程通常很简单：</p>
+                    
+					<ul>
+                        <li>点击“下一步”</li>
+						<img src="ITVM2.png" alt="安装步骤1" width="500" height="450">
+						<li>如果出现了这个界面，说明你已经有VMware了。</li>
+						<img src="ITVM-3.png" alt="安装步骤2" width="500" height="450">
+                        <li>建议更改一下安装位置，以防C盘爆掉......</li>
+						<img src="ITVM-4.png" alt="安装步骤3" width="500" height="450">
+                        <li><span style="#FF0000">如果你已经做到了这一步，VMware可能会找你要密钥，输入就是了，</span>如果你没有也有一定试用期,可正常使用。</li>
+						<img src="ITVM-5.png" alt="安装步骤4" width="500" height="450">
+                    </ul>
+                    <div class="note">
+                        <p><strong>注意：</strong>在安装过程中，您可能会看到有关网络接口和设备驱动的警告，这些是正常现象，请允许安装。</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="step-card">
+                <div class="step-number">4</div>
+                <div class="step-content">
+                    <h3>创建新的虚拟机</h3>
+                    <p>打开虚拟机软件并创建新虚拟机：</p>
+                    <ol>
+                        <li>在左侧空白部分右键单击，选择“新建”</li>
+						<img src="ITVM-6.png" alt="创建步骤1" width="400" height="300">
+                        <li>这里询问用什么配置选推荐的就好啦</li>
+                        <li>接下来他询问光盘映像文件，这个我会在下一部分讲到。</li>
+                        <li>给虚拟机命名选择位置等根据自身情况去填。（虚拟机位置建议放到空闲的磁盘里，否则磁盘可能会boom）</li>
+                        <li>根据自身需求设置磁盘大小（不要低于您装的系统要求的最低值）</li>
+						<img src="ITVM-7.png" alt="创建步骤2" width="400" height="450">
+							<div class="note">
+                        	<p><strong>提示：</strong>动态分配的虚拟硬盘最初很小，会随着使用而增长，节省磁盘空间。</p>
+                    	</div>
+						<li>在根据自身情况和需求设置其他配置</li>
+							<div class="note">
+                        	<p><strong>警告：</strong>内存大小最好不要设置的超过实体内存的<sup>3</sup>/<sub>4</sub>以免发生内存交换。</p>
+                    	</div>
+                    </ol>
+                </div>
+            </div>
+           
+		    <div class="step-card">
+                <div class="step-number">5</div>
+                <div class="step-content">
+                    <h3>下载操作系统镜像</h3>
+                    <p>选择您想在虚拟机中安装的操作系统。以下是一些常见选择：</p>
+                    
+                    <div class="os-grid">
+                        <div class="os-card">
+                            <img src="ITVM-Linux.webp" alt="Ubuntu Linux">
+                            <h4><a href="https://cn.ubuntu.com/download/">Ubuntu Linux</a></h4>
+                            <p>用户友好的Linux发行版</p>
+                        </div>
+                        <div class="os-card recommended">
+                            <img src="ITVM-Windows11.webp" alt="Windows11">
+							<h4><a href="https://www.microsoft.com/zh-cn/windows/get-windows-11">Windows 11</a></h4>
+                            <p>最流行的桌面操作系统</p>
+                        </div>
+                        <div class="os-card">
+                            <img src="ITVM-Unix.jpg" alt="FreeBSD">
+							<h4><a href="https://www.freebsd.org/">FreeBSD</a></h4>
+                            <p>稳定可靠的类Unix系统</p>
+                        </div>
+						<div class="os-card">
+                            <img src="ITVM-MacOS.webp" alt="MacOS">
+							<h4><a href="#">MacOS</a></h4>
+                            <p>适合设计的Mac系列</p>
+                            <p><small>警告：您的虚拟机只能安装黑苹果，请注意法律问题！故此处不提供链接！</small></p>
+                        </div>
+                    </div>
+					<p><strong>提示：</strong>本网站尚未完全完善，大家多多指教，如果有好建议或资源，联系我们：<a href="mailto:hktkMAX@outlook.com">邮件</a></p>
+                </div>
+            </div>
+           
+		    <div class="step-card">
+                <div class="step-number">6</div>
+                <div class="step-content">
+                    <h3>安装操作系统</h3>
+                    <p>启动新创建的虚拟机并安装操作系统：</p>
+                    <ol>
+                        <li>选择之前下载的操作系统ISO镜像</li>
+                        <li>启动虚拟机，安装程序将自动加载</li>
+                        <li>按照屏幕提示完成操作系统安装</li>
+                        <li>安装完成后，安装虚拟机增强功能/工具</li>
+                    </ol>
+                    <div class="note">
+                        <p><strong>注意：</strong>虚拟机增强功能提供更好的性能、鼠标集成和共享文件夹功能。（比如VMware_Tools，但部分操作系统可能不支持）</p>
+                    </div>
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>我的电脑需要什么配置才能流畅运行虚拟机？</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>建议配置：</p>
+                    <ul>
+                        <li>CPU：四核处理器（支持虚拟化技术）</li>
+                        <li>内存：16GB RAM（为虚拟机分配4-8GB）</li>
+                        <li>存储：SSD硬盘，至少50GB可用空间</li>
+                        <li>显卡：集成显卡足够，但游戏或图形工作需专用显卡</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>我可以在虚拟机中玩游戏吗？</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>简单的2D游戏和旧游戏可能可以运行，但现代3D游戏在虚拟机中性能不佳。虚拟机不是为高性能游戏设计的，因为存在图形和硬件访问限制。对于游戏，建议使用双系统启动或云游戏方案。</p>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>虚拟机中的网络如何工作？</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>虚拟机软件提供多种网络模式：</p>
+                    <ul>
+                        <li><strong>NAT</strong>：虚拟机共享主机的IP地址（默认模式）</li>
+                        <li><strong>桥接</strong>：虚拟机像独立设备一样在网络上可见</li>
+                        <li><strong>仅主机</strong>：虚拟机只能与主机通信</li>
+                        <li><strong>自定义特定网络</strong>：虚拟机之间可以通信，但无法访问外部网络</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div id="install-steps" class="card">
+            <h2>更多教程</h2>
+            <p>
+            <ul>
+                <li><a href="PVE-spice.html">前往 PVE Spice的教程</a></li>
+                <li><a href="#">尽请期待！</a></li>
+            </ul>
+            </p>
+        </div>
+    </div>
+</div>
+
+<style>
+.button-wrapper {
+    position: fixed;
+    right: 30px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 1000;
+}
+
+.modern-button:hover {
+    transform: translateY(-5px) translateX(-5px);
+    box-shadow: 0 12px 25px rgba(110, 69, 226, 0.5);
+    background: linear-gradient(135deg, #7c52f0 0%, #97e0da 100%);
+}
+
+.modern-button:active {
+    transform: translateY(2px) translateX(-5px);
+    box-shadow: 0 4px 15px rgba(110, 69, 226, 0.4);
+}
+
+.modern-button::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.7s ease;
+}
+
+.modern-button:hover::after {
+    left: 100%;
+}
+
+.button-label {
+    background: rgba(0, 0, 0, 0.7);
+    padding: 8px 15px;
+    border-radius: 6px;
+    font-size: 14px;
+    margin-bottom: 10px;
+    display: inline-block;
+}
+
+@media (max-width: 768px) {
+    .button-wrapper {
+        position: static;
+        transform: none;
+        margin-top: 30px;
+    }
+    
+    .modern-button {
+        width: auto;
+    }
+}
+</style>
+ 
+
+    <footer>
+        <p>权限所有：<a href="mailto:hktkMAX@outlook.com"><strong><mark>吉亮屹</mark></strong></a> &copy; 2025 | 本教程仅用于教育目的</p>
+        <p>实际安装过程可能因软件版本和操作系统不同而有所差异</p>
+    </footer>
+    
+    <script>
+        // 常见问题折叠功能
+        document.querySelectorAll('.faq-question').forEach(question => {
+            question.addEventListener('click', () => {
+                const faqItem = question.parentElement;
+                faqItem.classList.toggle('active');
+                
+                const icon = question.querySelector('i');
+                if (faqItem.classList.contains('active')) {
+                    icon.classList.remove('fa-chevron-down');
+                    icon.classList.add('fa-chevron-up');
+                } else {
+                    icon.classList.remove('fa-chevron-up');
+                    icon.classList.add('fa-chevron-down');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

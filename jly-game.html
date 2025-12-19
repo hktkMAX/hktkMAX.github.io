@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <link rel="icon" href="index-image.webp" type="image/png">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>吉亮屹的游戏空间</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-image: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            flex: 1;
+        }
+        
+        header {
+            text-align: center;
+            padding: 40px 0 30px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #eaeaea;
+        }
+        
+        .logo {
+            font-size: 2.8rem;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+        
+        .logo i {
+            color: #3498db;
+            margin-right: 10px;
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            color: #7f8c8d;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .intro-section {
+            background-color: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+            border-left: 4px solid #3498db;
+        }
+        
+        .intro-section p {
+            margin-bottom: 15px;
+        }
+        
+        .warning-box {
+            background-color: #fff9e6;
+            border-left: 4px solid #f1c40f;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .games-section {
+            margin-bottom: 40px;
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #ecf0f1;
+            display: flex;
+            align-items: center;
+        }
+        
+        .section-title i {
+            margin-right: 10px;
+            color: #3498db;
+        }
+        
+        .game-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        
+        .game-card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s, box-shadow 0.3s;
+            display: flex;
+            flex-direction: column;
+            border-top: 3px solid #3498db;
+        }
+        
+        .game-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        }
+        
+        .game-card h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+        
+        .game-card p {
+            color: #7f8c8d;
+            font-size: 0.95rem;
+            margin-bottom: 15px;
+            flex-grow: 1;
+        }
+        
+        .game-link {
+            display: inline-block;
+            background-color: #3498db;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background-color 0.3s;
+            text-align: center;
+            margin-top: auto;
+        }
+        
+        .game-link:hover {
+            background-color: #2980b9;
+        }
+        
+        .coming-soon {
+            background-color: #ecf0f1;
+            border-top: 3px solid #95a5a6;
+        }
+        
+        .coming-soon .game-link {
+            background-color: #95a5a6;
+        }
+        
+        .contact-section {
+            background-color: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+        }
+        
+        .contact-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .contact-link {
+            display: inline-flex;
+            align-items: center;
+            background-color: #f8f9fa;
+            color: #2c3e50;
+            padding: 10px 18px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+            border: 1px solid #eaeaea;
+        }
+        
+        .contact-link:hover {
+            background-color: #3498db;
+            color: white;
+            transform: translateY(-2px);
+            border-color: #3498db;
+        }
+        
+        .contact-link i {
+            margin-right: 8px;
+            font-size: 1.1rem;
+        }
+        
+        .update-notice {
+            background-color: #e8f4fc;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 30px;
+            font-style: italic;
+            color: #3498db;
+            border-left: 4px solid #3498db;
+        }
+        
+        footer {
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            text-align: center;
+            padding: 25px 20px;
+            margin-top: 40px;
+        }
+        
+        .footer-content {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        .footer-content p {
+            margin-bottom: 10px;
+        }
+        
+        .footer-content a {
+            color: #3498db;
+            text-decoration: none;
+        }
+        
+        .footer-content a:hover {
+            text-decoration: underline;
+        }
+        
+        .copyright {
+            font-size: 0.9rem;
+            color: #bdc3c7;
+            margin-top: 15px;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .logo {
+                font-size: 2.2rem;
+            }
+            
+            .game-list {
+                grid-template-columns: 1fr;
+            }
+            
+            .contact-links {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1 class="logo"><i class="fas fa-gamepad"></i>吉亮屹的游戏空间</h1>
+            <p class="subtitle">分享自制小游戏，体验编程与创意的乐趣</p>
+        </header>
+        
+        <main>
+            <section class="intro-section">
+                <p>欢迎来到我的游戏空间！这里展示的游戏是我或我和其他同学合作开发的。由于我们还在学习和实践阶段，游戏的质量和体验可能还有提升空间，敬请谅解。</p>
+                
+                <div class="warning-box">
+                    <p><i class="fas fa-exclamation-triangle"></i> 做游戏很辛苦，拒绝盗版，从你我做起！</p>
+                </div>
+                
+                <p>我们相信每一个游戏都是创作者的心血结晶，尊重原创是支持我们继续前进的最大动力。</p>
+            </section>
+            
+            <section class="games-section">
+                <h2 class="section-title"><i class="fas fa-list-ul"></i>目前有这些游戏</h2>
+                
+                <div class="game-list">
+                    <div class="game-card">
+                        <h3>反弹球游戏</h3>
+                        <p>一个简单的反弹球游戏，使用键盘控制挡板反弹小球，挑战高分！这是学习游戏开发的基础项目，适合休闲娱乐。</p>
+                        <a href="jly-pinball.html" target="_blank" class="game-link">立即试玩 <i class="fas fa-external-link-alt"></i></a>
+                    </div>
+                    
+                    <div class="game-card coming-soon">
+                        <h3>敬请期待</h3>
+                        <p>一个正在开发中的文字游戏。</p>
+                        <a href="#" target="_blank" class="game-link">即将推出 <i class="fas fa-clock"></i></a>
+                    </div>
+                </div>
+            </section>
+            
+            <section class="contact-section">
+                <h2 class="section-title"><i class="fas fa-hands-helping"></i>参与开发与支持</h2>
+                <p>目前我们只完成了少量游戏。如果您对游戏开发感兴趣，或者想为我们提供建议和帮助，欢迎联系我们：</p>
+                
+                <div class="contact-links">
+                    <a href="mailto:hktkMAX@outlook.com" class="contact-link">
+                        <i class="fas fa-envelope"></i> 邮件联系
+                    </a>
+                    <a href="https://github.com/hktkMAX" target="_blank" class="contact-link">
+                        <i class="fab fa-github"></i> GitHub 主页
+                    </a>
+                </div>
+            </section>
+            
+            <div class="update-notice">
+                <p><i class="fas fa-info-circle"></i> 我们正在持续改进网站设计和用户体验，更多精美功能和游戏即将上线！</p>
+            </div>
+        </main>
+    </div>
+    
+    <footer>
+        <div class="footer-content">
+            <p>版权所有：<a href="mailto:hktkMAX@outlook.com"><strong>吉亮屹</strong></a> &copy; 2025</p>
+            <p>本网站仅用于分享自制小游戏，所有游戏均为原创或合作开发</p>
+            <p class="copyright">感谢您的访问与支持！</p>
+        </div>
+    </footer>
+
+    <script>
+        // 简单交互效果
+        document.addEventListener('DOMContentLoaded', function() {
+            // 为游戏卡片添加点击效果
+            const gameCards = document.querySelectorAll('.game-card');
+            gameCards.forEach(card => {
+                card.addEventListener('click', function(e) {
+                    if (!e.target.classList.contains('game-link')) {
+                        const link = this.querySelector('.game-link');
+                        if (link && link.getAttribute('href') !== '#') {
+                            window.open(link.getAttribute('href'), '_blank');
+                        }
+                    }
+                });
+            });
+            
+            // 添加简单的加载动画
+            const cards = document.querySelectorAll('.game-card, .intro-section, .contact-section');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                
+                setTimeout(() => {
+                    card.style.transition = 'opacity 0.5s, transform 0.5s';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, 100 + index * 100);
+            });
+            
+            // 更新年份
+            const yearElement = document.querySelector('.footer-content p');
+            if (yearElement) {
+                yearElement.innerHTML = yearElement.innerHTML.replace('2025', new Date().getFullYear());
+            }
+        });
+    </script>
+</body>
+</html>

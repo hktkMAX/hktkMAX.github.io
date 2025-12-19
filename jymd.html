@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <link rel="icon" href="index-image.webp" type="image/png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Markdown 解析器</title>
+    <link rel="stylesheet" href="jymd.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked@9.1.6/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔍 Markdown 解析器</h1>
+            <p>解析markdown文本，支持一键复制和批量下载图片</p>
+        </header>
+
+        <div class="main-content">
+            <div class="input-section">
+                <h2>📝 输入 Markdown</h2>
+                
+                <!-- 文件上传区域 -->
+                <div class="file-upload-section">
+                    <div class="file-upload-container">
+                        <input type="file" id="fileInput" accept=".txt,.md,.markdown" class="file-input">
+                        <label for="fileInput" class="file-upload-label">
+                            📁 选择文件 (txt, md)
+                        </label>
+                        <span class="file-upload-text">或直接在下方输入内容</span>
+                    </div>
+                    
+                    <!-- 文件名显示区域 -->
+                    <div id="fileNameDisplay" class="file-name-display" style="display: none;">
+                        <div class="file-name-content">
+                            <span class="file-icon">📄</span>
+                            <span id="fileName" class="file-name"></span>
+                            <button id="copyTitleBtn" class="btn-copy-filename" title="复制标题">复制标题</button>
+                        </div>
+                    </div>
+                </div>
+
+                <textarea 
+                    id="markdownInput" 
+                    placeholder="在这里输入您的 Markdown 内容...&#10;&#10;示例：&#10;# 标题&#10;这是一段文本&#10;![图片](https://via.placeholder.com/300x200)"
+                    rows="15"
+                ></textarea>
+                <div class="input-buttons">
+                    <button id="parseBtn" class="btn btn-primary">🔄 解析</button>
+                    <button id="clearBtn" class="btn btn-secondary">🗑️ 清空</button>
+                </div>
+            </div>
+
+            <div class="output-section">
+                <div class="output-header">
+                    <h2>📋 解析结果</h2>
+                    <div class="output-buttons">
+                        <button id="copyTextBtn" class="btn btn-success">📄 复制纯文本</button>
+                        <button id="downloadImagesBtn" class="btn btn-warning">📥 批量下载(ZIP)</button>
+                    </div>
+                </div>
+                <div id="output" class="output-content">
+                    <div class="placeholder">
+                        解析结果将显示在这里...
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="image-info">
+            <h3>🖼️ 图片信息</h3>
+            <div id="imageList" class="image-list">
+                <div class="no-images">暂无图片</div>
+            </div>
+        </div>
+
+        <div class="toast" id="toast"></div>
+    </div>
+
+    <script src="jymd.js"></script>
+</body>
+</html> 

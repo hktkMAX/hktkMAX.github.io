@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <link rel="icon" href="index-image.webp" type="image/png">
+	<meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>如何在Proxmox VE里用SPICE做硬件直通</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7f9;
+            color: #333;
+            line-height: 1.6;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: linear-gradient(to right, #2c3e50, #4a6b8a);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .header-desc {
+            font-size: 1.1rem;
+            max-width: 800px;
+            margin: 0 auto;
+            opacity: 0.9;
+        }
+        
+        .content-wrapper {
+            display: flex;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .sidebar {
+            flex: 1;
+            min-width: 250px;
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            height: fit-content;
+        }
+        
+        .main-content {
+            flex: 3;
+            background: white;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        }
+        
+        h2 {
+            color: #2c3e50;
+            margin: 25px 0 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #4a6b8a;
+        }
+        
+        h3 {
+            color: #4a6b8a;
+            margin: 20px 0 12px;
+        }
+        
+        p {
+            margin-bottom: 16px;
+            text-align: justify;
+        }
+        
+        a {
+            color: #3498db;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        a:hover {
+            color: #2c3e50;
+            text-decoration: underline;
+        }
+        
+        .note {
+            background: #fff8e1;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 5px 5px 0;
+        }
+        
+        .note strong {
+            color: #ff9800;
+        }
+        
+        .steps {
+            margin: 20px 0;
+        }
+        
+        .step {
+            background: #f1f8ff;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-left: 4px solid #3498db;
+        }
+        
+        .step-number {
+            display: inline-block;
+            background: #3498db;
+            color: white;
+            width: 30px;
+            height: 30px;
+            text-align: center;
+            line-height: 30px;
+            border-radius: 50%;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+        
+        .download-box {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .toc {
+            list-style-type: none;
+        }
+        
+        .toc li {
+            margin-bottom: 10px;
+        }
+        
+        .toc a {
+            display: block;
+            padding: 8px 12px;
+            background: #f5f7f9;
+            border-radius: 5px;
+            transition: background 0.3s;
+            color: #4a6b8a;
+            font-weight: 500;
+        }
+        
+        .toc a:hover {
+            background: #e8f0fe;
+            text-decoration: none;
+        }
+        
+        .toc ul {
+            list-style-type: none;
+            margin: 8px 0 8px 20px;
+        }
+        
+        .code-block {
+            background: #f5f7f9;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 15px 0;
+            overflow-x: auto;
+            font-family: 'Consolas', monospace;
+            border-left: 4px solid #3498db;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+            background: white;
+            border-radius: 8px;
+            color: #666;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        }
+        
+        @media (max-width: 768px) {
+            .content-wrapper {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                margin-bottom: 20px;
+            }
+        }
+        
+        .img-placeholder {
+            background: #f5f7f9;
+            border-radius: 5px;
+            padding: 30px;
+            text-align: center;
+            margin: 15px 0;
+            border: 1px dashed #ccc;
+        }
+        
+        .img-placeholder i {
+            color: #a0a0a0;
+            margin-bottom: 10px;
+        }
+        
+        .img-caption {
+            color: #666;
+            font-style: italic;
+        }
+        
+        .section-icon {
+            margin-right: 10px;
+            color: #4a6b8a;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-desktop"></i> 如何在Proxmox VE里用SPICE做硬件直通</h1>
+            <p class="header-desc">本指南将帮助您在Proxmox VE虚拟化环境中配置SPICE协议，实现音频和USB设备的硬件直通</p>
+        </header>
+        
+        <div class="content-wrapper">
+            <aside class="sidebar">
+                <h2><i class="fas fa-list"></i> 目录</h2>
+                <ul class="toc">
+                    <li><a href="#preface"><i class="fas fa-angle-right"></i> 前言</a></li>
+                    <li><a href="#what-is-spice"><i class="fas fa-angle-right"></i> 什么是SPICE</a></li>
+                    <li><a href="#how-to-use"><i class="fas fa-angle-right"></i> 如何使用SPICE</a>
+                        <ul>
+                            <li><a href="#download"><i class="fas fa-angle-right"></i> 下载SPICE</a></li>
+                            <li><a href="#install"><i class="fas fa-angle-right"></i> 安装SPICE</a></li>
+                            <li><a href="#configure"><i class="fas fa-angle-right"></i> 配置SPICE</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="#using-spice"><i class="fas fa-angle-right"></i> 使用SPICE</a></li>
+                </ul>
+                
+                <div class="note">
+                    <strong><i class="fas fa-exclamation-circle"></i> 注意：</strong>
+                    由于版本和操作系统不同，实际操作可能有所不同！
+                </div>
+            </aside>
+            
+            <main class="main-content">
+                <section id="preface">
+                    <h2><i class="fas fa-pen section-icon"></i> 前言</h2>
+                    <p>在PVE里当你装好Windows然后突然发现：咦？我的虚拟机怎么没有声音？</p>
+                    <p>这是因为，如果不做其他设置的情况下我们没有添加声音设备。</p>
+                    <p>但是就算我们添加了声音设备也会发现仍然没有声音，想给它接一个音响但又不知道向哪里接。</p>
+                    <p>要解决这个问题我推荐使用SPICE控制台。</p>
+                </section>
+                
+                <section id="what-is-spice">
+                    <h2><i class="fas fa-question-circle section-icon"></i> 一、什么是SPICE</h2>
+                    <p>当你在互联网上搜索"给PVE上的windows用的SPICE"时你会发现一篇PVE官方的文章，由于它是英文的，对一些人不那么友好（比如说作者我），所以你按我说的做方法和那篇文章是一样的。原文链接我放在文章的最后了，感兴趣的大佬们可以去看一下。</p>
+                    <p>原文第一部分是介绍，具体内容如下：</p>
+                    <p>“（Simple Protocol for Independent Computing Environments）是一种为虚拟环境构建的开放式远程计算解决方案，允许用户查看计算"桌面"环境。将Spice集成到Proxmox VE中，为与键盘、鼠标、音频和视频等虚拟化桌面设备交互提供了解决方案。前端和后端之间的交互是使用虚拟设备接口（VDI）完成的。</p>
+                    <p>Spice实现了类似于与本地计算机交互的用户体验。它适用于LAN和WAN使用，而不会影响用户体验。</p>
+                    <p>在Proxmox VE上使用Spice既简单又安全。它集成在集群环境、用户和身份验证系统中，当然，所有流量都是完全加密的。</p>
+                    <p>Spice首次与Proxmox VE 3.1一起引入。”</p>
+                    <p>如你所见这是官方的说法。</p>
+                </section>
+                
+                <section id="how-to-use">
+                    <h2><i class="fas fa-cogs section-icon"></i> 二、怎么做才能让我使用SPICE</h2>
+                    <p>别着急，我们一步一步慢慢来。</p>
+                    
+                    <article id="download" class="steps">
+                        <h3><i class="fas fa-download"></i> 1. 下载SPICE</h3>
+                        <p>点击<a href="https://www.spice-space.org/download.html">这里</a>访问SPICE官网，在"Windows installers"下点击Virtual Machine Manager</p>
+                        <p>来到下载页面向下翻，找到"virt-viewer"，如果你是x64位的操作系统就点击"Win x64 MSI"，如果你是x86的操作系统则要点击Win x86 MSI"</p>
+                        
+                        <div class="img-placeholder">
+                            <img src="spice1.png" alt="SPICE下载页面示意图" width="600" height="328">
+                        </div>
+                    </article>
+                    
+                    <article id="install" class="steps">
+                        <h3><i class="fas fa-wrench"></i> 2. 安装SPICE</h3>
+                        <div class="step">
+                            <span class="step-number">1</span>
+                            <span>双击/右键运行下载下来的文件</span>
+                        </div>
+                        
+                        <p><em>如果出现磁盘驱动器的警告，请允许它们。</em></p>
+                        
+                        <div class="note">
+                            <strong><i class="fas fa-exclamation-circle"></i> 重要提示：</strong>
+                            只有虚拟机和客户机（你的电脑）都安装了SPICE才能使用SPICE控制台。
+                        </div>
+                    </article>
+                    
+                    <article id="configure" class="steps">
+                        <h3><i class="fas fa-sliders-h"></i> 3. 配置SPICE</h3>
+                        <p>到这里就只剩最后一步了。</p>
+                        
+                        <div class="step">
+                            <span class="step-number">1</span>
+                            <span>打开虚拟机配置，选择"硬件"选项</span>
+                        </div>
+                        
+                        <div class="step">
+                            <span class="step-number">2</span>
+                            <span>选中"显示"，点击"编辑"，将显卡改为SPICE</span>
+                        </div>
+                        
+                        <div class="step">
+                            <span class="step-number">3</span>
+                            <span>点击"添加"，选择"音频设备"，将后端驱动改为"SPICE"</span>
+                        </div>
+                        
+                        <div class="step">
+                            <span class="step-number">4</span>
+                            <span>添加USB设备，选择SPICE端口</span>
+                        </div>
+                        
+                        <p>当然，你也可以不添加USB设备和音频设备，它们不是必须的。</p>
+                    
+                    </article>
+                </section>
+                
+                <section id="using-spice">
+                    <h2><i class="fas fa-play-circle section-icon"></i> 三、使用SPICE</h2>
+                    <p>虚拟机开机时点击控制台的那个箭头，你会发现我们可以选择SPICE了。</p>
+                    
+                    <div class="img-placeholder">
+                        <img src="spice2.png" alt="控制台选择SPICE示意图" width="600" height="283">
+                    </div>
+                    
+                    <p>如果你无法选择SPICE，那么请回去检查那里是不是哪里搞错了。</p>
+                    
+                    <div class="note">
+                        <strong><i class="fas fa-link"></i> 官方文档：</strong>
+                        PVE官方的SPICE文档：<a href="https://pve.proxmox.com/wiki/SPICE">https://pve.proxmox.com/wiki/SPICE</a>
+                    </div>
+				    
+					<p style="text-align:center">如果你有好的建议或意见请联系我们：</p>
+					<p style="text-align:center"><a href="mailto:hktkMAX@outlook.com"><strong>邮件</a>或<a href="https://github.com/hktkMAX">GitHub
+                </a></p>
+                </section>
+            </main>
+        </div>
+        
+        <footer>
+        <p>权限所有：<a href="mailto:hktkMAX@outlook.com"><strong><mark>吉亮屹</mark></strong></a> &copy; 2025 | 本教程仅用于教育目的</p>
+        <p>实际安装过程可能因PVE版本和操作系统不同而有所差异</p>
+        <p>由于spice直通到您的硬件所以请您先考虑主机资源是否够用（特别是显卡），否则可能发生卡顿、延迟等问题。</p>
+        </footer>
+    </div>
+    
+    <script>
+        // 平滑滚动到锚点
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if(targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if(targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 20,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
