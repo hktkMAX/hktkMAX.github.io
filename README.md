@@ -1,1 +1,678 @@
-# hktkMAX.github.io
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="吉亮屹的个人网站 - 展示技术、创意和数字艺术">
+    <meta name="keywords" content="吉亮屹, 个人网站, 数字艺术, 技术博客, 任启瑞">
+    <link rel="icon" href="index-image.webp" type="image/png">
+    <title>吉亮屹的网站 | 数字艺术与技术</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #0af;
+            --secondary-color: #0ff;
+            --accent-1: #f0f;
+            --accent-2: #ff0;
+            --accent-3: #a0f;
+            --card-bg: rgba(10, 15, 30, 0.2);
+            --text-color: rgba(200, 230, 255, 0.9);
+            --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: '华文楷体', 'KaiTi', 'Noto Serif SC', serif;
+            overflow: hidden;
+            background: #000;
+            color: var(--primary-color);
+            height: 100vh;
+            position: relative;
+            line-height: 1.6;
+        }
+        
+        #matrixCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        
+        .container {
+            position: relative;
+            z-index: 10;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            overflow-y: auto;
+        }
+        
+        header {
+            text-align: center;
+            padding: 20px;
+            animation: fadeIn 1.5s ease-out;
+            margin-bottom: 2rem;
+        }
+        
+        h1 {
+            font-size: clamp(2.5rem, 8vw, 4.5rem);
+            margin-bottom: 1rem;
+            background: linear-gradient(90deg, #0af, #0ff, #0fa, #a0f);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+            letter-spacing: 4px;
+            font-weight: 800;
+            padding: 0.5rem;
+        }
+        
+        .subtitle {
+            font-size: 1.5rem;
+            color: var(--secondary-color);
+            max-width: 800px;
+            margin: 0 auto;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+            font-style: italic;
+        }
+        
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+            padding: 30px 20px;
+            justify-content: center;
+        }
+        
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border-radius: 18px;
+            padding: 20px 25px;
+            border: 1px solid rgba(100, 200, 255, 0.25);
+            box-shadow: 0 12px 40px rgba(0, 80, 150, 0.3),
+                        inset 0 0 20px rgba(0, 200, 255, 0.1);
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            animation: floatIn 0.8s ease-out;
+            min-height: 120px;
+            height: auto;
+            position: relative;
+            overflow: hidden;
+            transform-origin: center;
+            justify-content: center;
+        }
+        
+        .card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0, 200, 255, 0.1) 0%, transparent 70%);
+            transform: rotate(30deg);
+            z-index: -1;
+        }
+        
+        /* 卡片动画延迟 */
+        .card:nth-child(1) { 
+            animation-delay: 0.2s;
+            border-color: rgba(0, 255, 200, 0.3);
+        }
+        .card:nth-child(2) { 
+            animation-delay: 0.4s;
+            border-color: rgba(200, 0, 255, 0.3);
+        }
+        .card:nth-child(3) { 
+            animation-delay: 0.6s;
+            border-color: rgba(255, 200, 0, 0.3);
+        }
+        .card:nth-child(4) { 
+            animation-delay: 0.8s;
+            border-color: rgba(0, 200, 100, 0.3);
+        }
+        .card:nth-child(5) { 
+            animation-delay: 1.0s;
+            border-color: rgba(170, 0, 255, 0.3);
+        }
+        .card:nth-child(6) { 
+            animation-delay: 1.2s;
+            border-color: rgba(0, 150, 255, 0.3);
+        }
+        .card:nth-child(7) { 
+            animation-delay: 1.4s;
+            border-color: rgba(255, 100, 0, 0.3);
+        }
+        
+        .card:hover {
+            transform: translateY(-15px) scale(1.03);
+            box-shadow: 0 20px 50px rgba(0, 200, 255, 0.6),
+                        inset 0 0 30px rgba(0, 230, 255, 0.2);
+            background: rgba(15, 25, 50, 0.35);
+            z-index: 20;
+        }
+        
+        .card-title {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-align: left;
+            width: 100%;
+        }
+        
+        /* 卡片标题颜色 */
+        .card:nth-child(1) .card-title {
+            background: linear-gradient(90deg, #0ff, #0fa);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .card:nth-child(2) .card-title {
+            background: linear-gradient(90deg, #f0f, #a0f);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .card:nth-child(3) .card-title {
+            background: linear-gradient(90deg, #ff0, #fa0);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .card:nth-child(4) .card-title {
+            background: linear-gradient(90deg, #0fa, #0f5);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .card:nth-child(5) .card-title {
+            background: linear-gradient(90deg, #a0f, #70f);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .card:nth-child(6) .card-title {
+            background: linear-gradient(90deg, #0af, #08f);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .card:nth-child(7) .card-title {
+            background: linear-gradient(90deg, #f80, #f50);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .card-description {
+            color: var(--text-color);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 15px;
+            text-align: left;
+            width: 100%;
+            padding: 0;
+        }
+        
+        .card-link {
+            display: block;
+            text-align: center;
+            padding: 8px 20px;
+            background: rgba(0, 50, 100, 0.3);
+            color: #aef;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            letter-spacing: 1px;
+            transition: var(--transition);
+            border: 1px solid rgba(100, 200, 255, 0.4);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            margin-top: 5px;
+            width: auto;
+            align-self: center;
+        }
+        
+        .card-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 150, 255, 0.5), transparent);
+            transition: 0.5s;
+            z-index: -1;
+        }
+        
+        .card-link:hover {
+            background: rgba(0, 150, 255, 0.3);
+            box-shadow: 0 0 25px rgba(0, 200, 255, 0.7);
+            transform: translateY(-3px);
+        }
+        
+        .card-link:hover::before {
+            left: 100%;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: rgba(100, 200, 255, 0.6);
+            font-size: 1rem;
+            letter-spacing: 1px;
+            margin-top: auto;
+        }
+        
+        .copyright {
+            margin-bottom: 0.5rem;
+        }
+        
+        .contact {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 10px;
+        }
+        
+        .contact a {
+            color: rgba(100, 200, 255, 0.8);
+            text-decoration: none;
+            transition: color 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .contact a:hover {
+            color: #0ff;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes floatIn {
+            from { opacity: 0; transform: translateY(50px) scale(0.9); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        
+        .glow {
+            animation: glow 3s infinite alternate;
+        }
+        
+        @keyframes glow {
+            from { text-shadow: 0 0 10px #0ff, 0 0 20px #0ff; }
+            to { text-shadow: 0 0 20px #0ff, 0 0 40px #0ff, 0 0 60px #0ff; }
+        }
+        
+        /* Particles */
+        .particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 5;
+        }
+        
+        .particle {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: #0ff;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #0ff, 0 0 20px #0ff;
+            animation: particleMove 5s linear infinite;
+            will-change: transform, opacity;
+        }
+        
+        @keyframes particleMove {
+            0% { transform: translateY(0) translateX(0); opacity: 1; }
+            100% { transform: translateY(-100px) translateX(20px); opacity: 0; }
+        }
+        
+        /* 卡片图标样式 */
+        .card-icon {
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2rem;
+            color: var(--secondary-color);
+        }
+        
+        /* 游戏空间特殊效果 */
+        .card-game-space {
+            position: relative;
+        }
+        
+        .card-game-space::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #f80, #f50, #f80);
+            animation: border-glow 3s infinite linear;
+        }
+        
+        @keyframes border-glow {
+            0% { opacity: 0.3; }
+            50% { opacity: 1; }
+            100% { opacity: 0.3; }
+        }
+        
+        /* Responsive design */
+        @media (max-width: 900px) {
+            .grid-container {
+                grid-template-columns: repeat(2, 1fr);
+                max-width: 800px;
+                margin: 0 auto;
+            }
+            
+            .container {
+                height: auto;
+                min-height: 100vh;
+            }
+        }
+        
+        @media (max-width: 600px) {
+            .grid-container {
+                grid-template-columns: 1fr;
+                padding: 20px 10px;
+                gap: 20px;
+            }
+            
+            .card {
+                padding: 20px 15px;
+                min-height: 110px;
+            }
+            
+            /* 移动设备上调整动画延迟 */
+            .card:nth-child(1) { animation-delay: 0.1s; }
+            .card:nth-child(2) { animation-delay: 0.2s; }
+            .card:nth-child(3) { animation-delay: 0.3s; }
+            .card:nth-child(4) { animation-delay: 0.4s; }
+            .card:nth-child(5) { animation-delay: 0.5s; }
+            .card:nth-child(6) { animation-delay: 0.6s; }
+            .card:nth-child(7) { animation-delay: 0.7s; }
+            
+            .contact {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .card-title {
+                font-size: 1.3rem;
+            }
+            
+            .card-description {
+                font-size: 0.9rem;
+            }
+        }
+        
+        /* Performance enhancements */
+        .card, .card-link {
+            will-change: transform, box-shadow, background;
+        }
+        
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 20, 40, 0.5);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: rgba(0, 150, 255, 0.5);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 200, 255, 0.8);
+        }
+    </style>
+</head>
+<body>
+    <canvas id="matrixCanvas"></canvas>
+    <div class="particles" id="particles"></div>
+    
+    <div class="container">
+        <header>
+            <h1>吉亮屹的数字世界</h1>
+            <p class="subtitle">算力、代码与创意的交汇之处</p>
+        </header>
+        
+        <div class="grid-container">
+            <div class="card">
+                <h3 class="card-title">算力过剩的产物</h3>
+                <p class="card-description">当计算能力超越需求<br>诞生了不可预测的创造物<br>数字世界的意外结晶</p>
+                <a href="#" class="card-link">探索现象</a>
+            </div>
+            
+            <div class="card">
+                <h3 class="card-title">虚拟机安装教程</h3>
+                <p class="card-description">未知虚拟机正在形成<br>未来炸弹💣已经埋下<br>请等待硬盘爆炸</p>
+                <a href="ITVM.html" class="card-link">访问教程</a>
+            </div>
+
+            <div class="card">
+                <h3 class="card-title">技术实验室</h3>
+                <p class="card-description">前沿技术的实验场<br>代码与硬件的交响曲<br>探索数字世界的边界</p>
+                <a href="#" class="card-link">进入实验室</a>
+            </div>
+            
+            <div class="card">
+                <h3 class="card-title">markdown在线解译</h3>
+                <p class="card-description">文本魔法的转化引擎<br>轻量标记的结构蜕变<br>数字思想的优雅呈现</p>
+                <a href="jymd.html" class="card-link">体验解译器</a>
+            </div>
+            
+            <div class="card">
+                <h3 class="card-title">任启瑞的项目空间</h3>
+                <p class="card-description">创新项目与前沿技术<br>探索数字世界的无限可能<br>开启技术新篇章</p>
+                <a href="https://renqirui.rth2.xyz/" class="card-link">访问项目空间</a>
+            </div>
+            
+            <div class="card">
+                <h3 class="card-title">利用spice实现PVE硬件直通</h3>
+                <p class="card-description">SPICE协议高级应用<br>Proxmox VE硬件直通技术<br>提升虚拟化性能与体验</p>
+                <a href="PVE-spice.html" class="card-link">查看教程</a>
+            </div>
+            
+            <div class="card">
+                <h3 class="card-title">游戏空间</h3>
+                <p class="card-description">沉浸式游戏体验<br>创意与娱乐的完美结合<br>探索虚拟世界的乐趣</p>
+                <a href="jly-game.html" class="card-link">进入游戏</a>
+            </div>
+        </div>
+        
+        <footer>
+            <div class="copyright">
+                <p><em>版权所有:</em> <strong>吉亮屹</strong> <em>&copy;</em> <b>2025</b></p>
+            </div>
+            <div class="contact">
+                <a href="mailto:hktkMAX@outlook.com">
+                    <i class="fas fa-envelope"></i> 邮件联系
+                </a>
+                <a href="https://github.com/hktkMAX">
+                    <i class="fab fa-github"></i> GitHub
+                </a>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // 性能优化：使用requestAnimationFrame和节流
+        let lastRenderTime = 0;
+        const fps = 30;
+        
+        // 代码雨特效
+        const canvas = document.getElementById('matrixCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        // 设置canvas尺寸为窗口大小
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        
+        resizeCanvas();
+        
+        // 定义字符集
+        const characters = '01010101010101010101';
+        const fontSize = 16;
+        const columns = Math.floor(canvas.width / fontSize);
+        
+        // 创建雨滴数组
+        const drops = [];
+        for (let i = 0; i < columns; i++) {
+            drops[i] = Math.floor(Math.random() * canvas.height / fontSize);
+        }
+        
+        // 绘制代码雨
+        function drawMatrix(timestamp) {
+            const deltaTime = timestamp - lastRenderTime;
+            
+            if (deltaTime > 1000 / fps) {
+                // 半透明黑色背景
+                ctx.fillStyle = 'rgba(0, 5, 15, 0.08)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                // 设置字体和颜色
+                ctx.font = `bold ${fontSize}px monospace`;
+                ctx.fillStyle = '#0f0';
+                
+                // 绘制字符
+                for (let i = 0; i < drops.length; i++) {
+                    // 随机选择字符
+                    const text = characters.charAt(Math.floor(Math.random() * characters.length));
+                    
+                    // 随机透明度
+                    const opacity = Math.random() * 0.8 + 0.2;
+                    ctx.globalAlpha = opacity;
+                    
+                    // 绘制字符
+                    ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                    
+                    // 重置雨滴位置
+                    if (drops[i] * fontSize > canvas.height && Math.random() > 0.97) {
+                        drops[i] = 0;
+                    }
+                    
+                    // 下移雨滴
+                    drops[i]++;
+                }
+                
+                // 重置透明度
+                ctx.globalAlpha = 1.0;
+                
+                lastRenderTime = timestamp;
+            }
+            
+            requestAnimationFrame(drawMatrix);
+        }
+        
+        // 启动动画
+        requestAnimationFrame(drawMatrix);
+        
+        // 响应窗口大小变化（使用节流）
+        let resizeTimeout;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                resizeCanvas();
+            }, 200);
+        });
+        
+        // 创建粒子效果（优化版）
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = 25;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                
+                // 随机位置
+                const posX = Math.random() * 100;
+                const posY = Math.random() * 100 + 100;
+                particle.style.left = `${posX}%`;
+                particle.style.top = `${posY}%`;
+                
+                // 随机大小
+                const size = Math.random() * 3 + 1;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                
+                // 随机颜色
+                const colors = ['#0ff', '#f0f', '#ff0', '#0f0', '#a0f'];
+                particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+                
+                // 随机动画延迟和持续时间
+                const delay = Math.random() * 5;
+                const duration = Math.random() * 5 + 5;
+                particle.style.animationDelay = `${delay}s`;
+                particle.style.animationDuration = `${duration}s`;
+                
+                particlesContainer.appendChild(particle);
+                
+                // 移除动画结束的粒子
+                particle.addEventListener('animationend', () => {
+                    particle.remove();
+                });
+            }
+            
+            // 持续生成新粒子（减少频率）
+            setTimeout(createParticles, 800);
+        }
+        
+        // 启动粒子系统
+        createParticles();
+        
+        // 卡片悬停效果
+        const cards = document.querySelectorAll('.card');
+        cards.forEach(card => {
+            card.addEventListener('mouseenter', (e) => {
+                // 创建波纹效果
+                const ripple = document.createElement('div');
+                ripple.style.position = 'absolute';
+                ripple.style.borderRadius = '50%';
+                ripple.style.background = 'radial-gradient(circle, rgba(0,200,255,0.3), transparent)';
+                ripple.style.width = '0';
+                ripple.style.height = '0';
+                ripple.style.top = `${e.offsetY}px`;
+                ripple.style.left = `${e.offsetX}px`;
+                ripple.style.transform = 'translate(-50%, -50%)';
+                ripple.style.pointerEvents = 'none';
+                ripple.style.zIndex = '1';
+                card.appendChild(ripple);
+                
+                // 动画
+                const size = Math.max(card.offsetWidth, card.offsetHeight) * 2;
+                const animation = ripple.animate([
+                    { width: '0', height: '0', opacity: 1 },
+                    { width: `${size}px`, height: `${size}px`, opacity: 0 }
